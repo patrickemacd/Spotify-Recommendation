@@ -6,4 +6,4 @@ I will be using Spotify's API. I do not know what I am doing currently, but will
 I just discovered an unbelievable video by *codingforentrepreneurs* and have used it as my guide for the client development.
 Now its time to talk to the API and gather information for the Logistic Regression model. 
 
-
+#My friend will (who is very cool) just taught me git! 
