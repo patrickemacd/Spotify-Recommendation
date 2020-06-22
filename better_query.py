@@ -136,7 +136,10 @@ class SpotifyAPI(object):
     def get_features(self,_id):
         return self.get_resource(_id,resource_type = 'audio-features')
 
-    
+    def get_tracks(self,_id):
+        return self.get_more(_id,resource_type = 'albums', topic = 'tracks')
+
+
     def base_search(self, query_params):
         headers = self.get_resource_header()
         endpoint = "https://api.spotify.com/v1/search"
@@ -150,23 +153,9 @@ class SpotifyAPI(object):
     #create an operator that discludes any lists of artists within the specific playlist
     
 
-    def search(self, query=None, operator=None, operator_query=None, search_type = 'artist'):
+    def search(self, query=None, operator=None, operator_query=None, search_type = None):
         if query == None:
             raise Exception("A search must be done")
-        user_input1 = None
-        user_input2 = None
-
-        user_input1 = input("What are you looking for today, artist,track,album?\n Please type here: ")
-        if user_input1 == "artist":
-            user_input2 = input("Type the artist to the right: ")
-        elif user_input1 == "album":
-            user_input2 == input("Type the album to the right: ")
-        elif user_input1 == "track":
-            user_input2 == input("Type the track to the right: ")
-        else:
-            
-
-
 
         if isinstance(query, dict):
             query = " ".join([f"{k}:{v}" for k,v in query.items()]) #creating a list from a dictionary)
@@ -195,10 +184,57 @@ class SpotifyAPI(object):
 #connecting to spotify client
 spotify = SpotifyAPI(client_id,client_secret)
 
-search = spotify.search(query = "Local Natives", search_type = "artist")
-print(search)
-#running related artists
-# related = spotify.get_related_artists("43ZHCT0cAZBISjO8DG9PnE")
-# print(related)
+
+#search ids and artist id
+search = spotify.search(query = "Local Natives", search_type = "album")
+#print(search)
+
+
+
+# the name of album 
+album_name = search['albums']['items'][0]['name']
+
+#gathering the total tracks from albums
+
+# for i in range():
+#    print(search['albums']['items'][i]['name'])
+   #total_tracks =  search['albums']['items'][i]['total_tracks']
+
+
+
+# search['albums']['items'][0]['total_tracks']
+
+# # find the year of the album release date
+# album_year = search['albums']['items'][0]['release_date']
+
+# # gather album id 
+album_id = search['albums']['items'][0]['id']
+
+# album_1 = spotify.get_album(str(album_id))
+
+print(spotify.get_tracks(str(album_id)))
+
+# #getting the track name, duration as well
+# album_track1 = album_1['tracks']['items'][0]['name']
+
+
+# # for loop time!
+
+# # for i in len(album_1['tracks']['items']):
+# #     print([i]['name'])
+
+
+
+
+
+######## the actual seraching part 
+
+# finding genre from an artist
+# def genre_find(x):
+#     search = spotify.search(query = x, search_type = "artist")
+#     list_search = search['artists']['items'][0]['genres']
+#     return list_search
+
+
 
 
