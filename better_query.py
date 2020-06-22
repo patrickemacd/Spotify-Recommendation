@@ -5,7 +5,7 @@ import datetime
 from urllib.parse import urlencode
 
 client_id = "351e3f22d6504e4da8a5b81badf7642d"
-client_secret = "c776dae623994f56ae4ffb265f1719da"
+client_secret = "INSERT YOUR CLIENT SECRET"
 
 
 
@@ -196,9 +196,9 @@ album_name = search['albums']['items'][0]['name']
 
 #gathering the total tracks from albums
 
-# for i in range():
-#    print(search['albums']['items'][i]['name'])
-   #total_tracks =  search['albums']['items'][i]['total_tracks']
+ for i in range():
+    print(search['albums']['items'][i]['name'])
+   total_tracks =  search['albums']['items'][i]['total_tracks']
 
 
 
