@@ -9,4 +9,4 @@ Now its time to talk to the API and gather information for the Logistic Regressi
 My friend will (who is very cool) just taught me git!
 
 I will be using a lot of dictionary comprehension in order to go through the JSON that I retrive from Spotify...let's see how this goes...
-
+# Took a brief hiatus, but will be back soon.
