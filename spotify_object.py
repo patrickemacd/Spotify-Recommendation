@@ -1,12 +1,13 @@
 import base64
 import requests
 import datetime
+import client_credentials
 import json
 from time import sleep
 from urllib.parse import urlencode
 
 client_id = "351e3f22d6504e4da8a5b81badf7642d"
-client_secret = "c776dae623994f56ae4ffb265f1719da"
+client_secret = client_credentials.client_secret
 
 
 #creating Spotify object
@@ -117,8 +118,18 @@ class SpotifyAPI(object):
         if r.status_code not in range(200,299):
             return {}
         return r.json()
-    
 
+    #getting recommendations from seeds 
+    def get_recommendations(self, lookup_id, seed_artists = None, seed_tracks = None, *args):
+        base_url = "https://api.spotify.com/v1/recommendations"
+        endpoint = f"{base_url}/{seed_artists}/{seed_tracks}/{topic}/{args}"
+        headers = self.get_resource_header()
+        r = requests.get(endpoint, headers = headers)
+        if r.status_code not in range(200,299):
+            return {}
+        return r.json()
+
+    #base search that the main search is built off of 
     def base_search(self, query_params):
         headers = self.get_resource_header()
         endpoint = "https://api.spotify.com/v1/search"
@@ -133,13 +144,16 @@ class SpotifyAPI(object):
     
 
     #search query setting track as defauly becuase album create a lot of things
-    def search(self, query=None, genre = None, operator=None, operator_query=None, search_type = None, limit = None):
+    def search(self, query=None, genre_type = None, operator=None, operator_query=None, search_type = None, limit = None):
         if query == None:
             raise Exception("A search must be done")
         #check to see if the query is a dictionary
         if isinstance(query, dict):
             query = " ".join([f"{k}:{v}" for k,v in query.items()]) #using list comprehension for query 
-        query_params = urlencode({"q": query, "genre": genre, "type": search_type, "limit": limit})
+        query_params = urlencode({"q": query, "type": search_type, "limit": limit})
+        #this section is if genre is selected then, songs would be included in the genre
+        if isinstance(genre_type,str):
+             query_params = urlencode({"q": f"{query} genre: {genre_type}", "type": search_type, "limit": limit})
         if operator != None and operator_query != None:
             if operator.lower() == "or" or operator.lower() == 'not':
                 operator = operator.upper
@@ -174,3 +188,8 @@ class SpotifyAPI(object):
 
 #running the for spotify api
 spotify = SpotifyAPI(client_id,client_secret)
+
+
+
+
+
