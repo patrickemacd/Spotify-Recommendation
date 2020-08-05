@@ -110,7 +110,7 @@ class SpotifyAPI(object):
     
     # searching for more than the bare bones information that just requires the ID
         #we can later just input build the recommendation based off of the parameters of related artists and features
-    def get_more(self, lookup_id, resource_type = None, topic = None, version = "v1"):
+    def get_more(self, lookup_id, resource_type = None, version = "v1", topic = None):
         base_url = "https://api.spotify.com"
         endpoint = f"{base_url}/{version}/{resource_type}/{lookup_id}/{topic}"
         headers = self.get_resource_header()
@@ -119,15 +119,19 @@ class SpotifyAPI(object):
             return {}
         return r.json()
 
-    #getting recommendations from seeds 
-    def get_recommendations(self, lookup_id, seed_artists = None, seed_tracks = None, *args):
+    #getting recommendations from seeds, must add this feature for creating recommendations
+    def get_recommendations(self, seed_tracks = None, seed_artists = None, seed_genres = None, limit = None, **kwargs):
+        query_params = urlencode({"seed_artists": seed_artists, "seed_tracks": seed_tracks, "seed_genres": seed_genres, **kwargs, "limit": limit})
         base_url = "https://api.spotify.com/v1/recommendations"
-        endpoint = f"{base_url}/{seed_artists}/{seed_tracks}/{topic}/{args}"
+        endpoint = f"{base_url}?{query_params}"
+        print(endpoint)
         headers = self.get_resource_header()
         r = requests.get(endpoint, headers = headers)
+        
         if r.status_code not in range(200,299):
             return {}
         return r.json()
+
 
     #base search that the main search is built off of 
     def base_search(self, query_params):
@@ -135,7 +139,15 @@ class SpotifyAPI(object):
         endpoint = "https://api.spotify.com/v1/search"
         url = f"{endpoint}?{query_params}"
         r = requests.get(url, headers = headers)
-        
+        if r.status_code not in range(200,299):
+            return {}
+        return r.json()
+
+    #this just acts a very basic serach if you have the api url
+    def url_search(self,_url):
+        headers = self.get_resource_header()
+        url = _url
+        r = requests.get(url,headers = headers)
         if r.status_code not in range(200,299):
             return {}
         return r.json()
@@ -162,33 +174,53 @@ class SpotifyAPI(object):
 
         return self.base_search(query_params)
 
-  #have to work on formatting the json that is output so we only get all the tracks and album name 
-    # in an ordered dictionary
+
+    """ALL OF THESE ARE METHODS for gathering information from the API, might add more, might not we'll see..."""
+
+    #retrieve an album dependant on the ID
     def get_album(self, _id):
         return self.get_resource(_id,resource_type = 'albums')
-    
+    #retrieve an artist's information
     def get_artist(self, _id):
         return self.get_resource(_id,resource_type = 'artists')
-    
+    #retrieve related artists, input the OG artist's id
     def get_related_artists(self,_id):
         return self.get_more(_id,resource_type = 'artists', topic = 'related-artists')
-    
-    def get_tracks(self, _id):
+    #gather tracks with the id
+    def get_track(self, _id):
         return self.get_resource(_id,resource_type = 'tracks')
-    
+    #gather fetaures like danceability,tempo and everything according to spotify 
     def get_features(self,_id):
         return self.get_resource(_id,resource_type = 'audio-features')
-
+    #gather the audio analysis, A LOT OF INFORMATION HERE! I will have to figure out how useful the songs are
     def get_analysis(self,_id):
         return self.get_resource(_id,resource_type = 'audio-analysis')
-
+    #Get tracks from within an album
     def get_tracks(self,_id):
         return self.get_more(_id,resource_type = 'albums', topic = 'tracks')
-  
+
+
+    #retrieve playlist information from the user ID
+    def get_user_playlists(self,_id):
+        return self.get_more(_id,resource_type = 'users', topic = 'playlists')
+
+    def get_playlist(self,_id):
+        return self.get_more(_id, resource_type = 'playlists')
+
+    #retrieve playlist contents from the playlist ID
+    def get_playlist_items(self,_id):
+        return self.get_more(_id,resource_type = 'playlists', topic = 'tracks')
+
 
 #running the for spotify api
 spotify = SpotifyAPI(client_id,client_secret)
 
+#test output, for some reason the limit function is not working
+
+
+
+#output = spotify.search(query = {"track":"blue"}, genre_type = "indie", search_type = "track")
+#print(output)
 
 
 
